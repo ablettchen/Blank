@@ -117,21 +117,28 @@ public class Blank: NSObject {
         return Blank.init(type: type, image: defaultBlankImage(type: type), title: title, desc: nil, tap: nil)
     }
     
+    private class func blankBundle() -> Bundle? {
+        if let bundlePath = Bundle.init(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
+            return Bundle(path: bundlePath)
+        }
+        return nil
+    }
+    
     public class func defaultBlankImage(type: BlankType) -> UIImage? {
         switch type {
         case .fail:
-            return UIImage(named: "")
+            return UIImage(named: "blank_fail", in: blankBundle(), compatibleWith: nil)
         case .noData:
-            return UIImage(named: "")
+            return UIImage(named: "blank_nodata", in: blankBundle(), compatibleWith: nil)
         case .noNetwork:
-            return UIImage(named: "")
+            return UIImage(named: "blank_nonetwork", in: blankBundle(), compatibleWith: nil)
         }
     }
 
     public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer)->(Void))? ) {
 
         self.imageAnimating = false
-        self.loadingImage = UIImage(named: "222")
+        self.loadingImage = UIImage(named: "blank_loading_circle@2x")
         
         self.tap = tap
         
@@ -141,6 +148,7 @@ public class Blank: NSObject {
         self.image = image
         self.title = title
         self.desc = desc
+        
     }
 }
 
