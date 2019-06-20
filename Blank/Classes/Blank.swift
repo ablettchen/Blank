@@ -150,6 +150,8 @@ public class Blank: NSObject {
     }
 }
 
+private var kImageView = "kImageView"
+
 public class BlankView: UIView {
     
     private var conf:BLankConf!
@@ -162,16 +164,14 @@ public class BlankView: UIView {
         return view
     }()
     
-    public var imageView: UIImageView! {
-        get {
-            let view = UIImageView()
-            view.isUserInteractionEnabled = true
-            view.contentMode = .scaleAspectFit
-            view.isUserInteractionEnabled = false
-            view.accessibilityIdentifier = "blank image"
-            return view
-        }
-    }
+    private lazy var imageView: UIImageView = {
+        let view = UIImageView()
+        view.isUserInteractionEnabled = true
+        view.contentMode = .scaleAspectFit
+        view.isUserInteractionEnabled = false
+        view.accessibilityIdentifier = "blank image"
+        return view
+    }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -305,9 +305,18 @@ public class BlankView: UIView {
             make.bottom.equalTo(lastConstraint).offset(conf.verticalOffset)
         }
         
+        if self.blank.isAnimating {
+            if let animation = self.blank.animation {
+                self.imageView.layer.add(animation, forKey: "BlankImageViewAnimationKey")
+            }
+        }else if self.imageView.layer.animation(forKey: "BlankImageViewAnimationKey") != nil {
+            self.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
+        }
+        
         UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
             self.contentView.alpha = 1.0
         }) { (finished) in }
+        
     }
 }
 
@@ -415,13 +424,6 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                     make.center.equalToSuperview()
                 }
                 
-                if view.blank.isAnimating {
-                    if let animation = view.blank.animation {
-                        self.blankView.imageView.layer.add(animation, forKey: "BlankImageViewAnimationKey")
-                    }
-                }else if self.blankView.imageView.layer.animation(forKey: "BlankImageViewAnimationKey") != nil {
-                    self.blankView.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
-                }
             }
             
         }else if blankVisiable {
