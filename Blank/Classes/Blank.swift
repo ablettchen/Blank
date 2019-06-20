@@ -89,7 +89,7 @@ public class Blank: NSObject {
     public var loadingImage: UIImage?
     
     /// is animating
-    public var isAnimating: Bool
+    public var isAnimating: Bool = false
     
     /// animation
     public var animation: CAAnimation! {
@@ -118,7 +118,7 @@ public class Blank: NSObject {
     }
     
     private class func blankBundle() -> Bundle? {
-        if let bundlePath = Bundle.init(for: self).resourcePath?.appending("/Blank.bundle") {
+        if let bundlePath = Bundle.init(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
             return Bundle(path: bundlePath)
         }
         return nil
@@ -137,7 +137,6 @@ public class Blank: NSObject {
 
     public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer)->(Void))? ) {
 
-        self.isAnimating = false
         self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
         self.tap = tap
         
