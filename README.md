@@ -10,6 +10,8 @@
 
 ```swift
 
+import Blank
+
     /// add scrollView
     let scrollView = UIScrollView()
     self.view.addSubview(scrollView)

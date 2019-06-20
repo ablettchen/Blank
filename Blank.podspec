@@ -28,9 +28,9 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Blank/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'Blank' => ['Blank/Assets/*.png']
-  # }
+  s.resource_bundles = {
+     'Blank' => ['Blank/Assets/*.xcassets']
+  }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
