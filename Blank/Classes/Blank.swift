@@ -55,12 +55,12 @@ public class BLankConf: NSObject {
     public func reset() -> Void {
         self.backgorundColor = .white
         
-        self.titleFont = .systemFont(ofSize: 12)
-        self.titleColor = .gray
+        self.titleFont = .systemFont(ofSize: 14)
+        self.titleColor = .darkGray
         
-        self.descFont = .systemFont(ofSize: 10)
-        self.descColor = .lightGray
-        
+        self.descFont = .systemFont(ofSize: 12)
+        self.descColor = .gray
+
         self.verticalOffset = 0.0
         self.titleToImagePadding = 15.0
         self.descToTitlePadding = 10.0
@@ -83,7 +83,7 @@ public class Blank: NSObject {
     public var desc: NSAttributedString?
     
     /// blank view tap action
-    public var tap: (_ :UITapGestureRecognizer)->(Void)?
+    public var tap: ((_ :UITapGestureRecognizer)->(Void))?
     
     /// loadingView
     public var loadingImage: UIImage?
@@ -104,7 +104,31 @@ public class Blank: NSObject {
         }
     }
     
-    public init(type:BlankType, image:UIImage?, title:NSAttributedString, desc:NSAttributedString, tap:@escaping (_ :UITapGestureRecognizer)->(Void)) {
+    public class func defaultBlank(type: BlankType) -> Blank {
+        var title: NSAttributedString!
+        switch type {
+        case .fail:
+            title = NSAttributedString(string: "请求失败")
+        case .noData:
+            title = NSAttributedString(string: "暂时没有数据～")
+        case .noNetwork:
+            title = NSAttributedString(string: "哎呀,断网了～")
+        }
+        return Blank.init(type: type, image: defaultBlankImage(type: type), title: title, desc: nil, tap: nil)
+    }
+    
+    public class func defaultBlankImage(type: BlankType) -> UIImage? {
+        switch type {
+        case .fail:
+            return UIImage(named: "")
+        case .noData:
+            return UIImage(named: "")
+        case .noNetwork:
+            return UIImage(named: "")
+        }
+    }
+
+    public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer)->(Void))? ) {
 
         self.imageAnimating = false
         self.loadingImage = UIImage(named: "222")
@@ -121,7 +145,7 @@ public class Blank: NSObject {
 }
 
 public class BlankView: UIView {
-
+    
     private var conf:BLankConf!
     
     private lazy var contentView: UIView = {
@@ -297,7 +321,6 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     public func setBlank(_ newValue:Blank) -> Void {
-        
         if !canDisplay() {
             invalidate()
         }
@@ -327,6 +350,13 @@ extension UIScrollView: UIGestureRecognizerDelegate {
         }
     }
     
+    public func blankConfReset() -> Void {
+        self.blankView.update {
+            (conf) in
+            conf.reset()
+        }
+    }
+    
     private var blankView: BlankView! {
         get {
             if let view = objc_getAssociatedObject(self, &kBlankView) as? BlankView {
@@ -348,7 +378,9 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     @objc private func tapAction(_ gesture:UITapGestureRecognizer) -> Void {
-        self.blank.tap(gesture)
+        if let tap = self.blank.tap {
+            tap(gesture)
+        }
     }
     
     public func reloadBlank() -> Void {
@@ -366,9 +398,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 }
                 
                 view.reset()
-                
                 view.blank = blank
-                
                 view.isHidden = false
                 view.prepare()
                 
@@ -376,7 +406,6 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                     make.size.equalToSuperview()
                     make.center.equalToSuperview()
                 }
-                
             }
             
         }else if blankVisiable {
@@ -419,9 +448,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 }
             }
         }
-        
         return items
-        
     }
     
     private func invalidate() -> (Void) {
