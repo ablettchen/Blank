@@ -89,10 +89,10 @@ public class Blank: NSObject {
     public var loadingImage: UIImage?
     
     /// is animating
-    public var imageAnimating: Bool
+    public var isAnimating: Bool
     
     /// animation
-    public var animation: CAAnimation {
+    public var animation: CAAnimation! {
         get {
             let ani = CABasicAnimation(keyPath: "transform")
             ani.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
@@ -118,7 +118,7 @@ public class Blank: NSObject {
     }
     
     private class func blankBundle() -> Bundle? {
-        if let bundlePath = Bundle.init(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
+        if let bundlePath = Bundle.init(for: self).resourcePath?.appending("/Blank.bundle") {
             return Bundle(path: bundlePath)
         }
         return nil
@@ -137,9 +137,8 @@ public class Blank: NSObject {
 
     public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer)->(Void))? ) {
 
-        self.imageAnimating = false
-        self.loadingImage = UIImage(named: "blank_loading_circle@2x")
-        
+        self.isAnimating = false
+        self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
         self.tap = tap
         
         super.init()
@@ -164,14 +163,16 @@ public class BlankView: UIView {
         return view
     }()
     
-    private lazy var imageView: UIImageView = {
-        let view = UIImageView()
-        view.isUserInteractionEnabled = true
-        view.contentMode = .scaleAspectFit
-        view.isUserInteractionEnabled = false
-        view.accessibilityIdentifier = "blank image"
-        return view
-    }()
+    public var imageView: UIImageView! {
+        get {
+            let view = UIImageView()
+            view.isUserInteractionEnabled = true
+            view.contentMode = .scaleAspectFit
+            view.isUserInteractionEnabled = false
+            view.accessibilityIdentifier = "blank image"
+            return view
+        }
+    }
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -195,7 +196,7 @@ public class BlankView: UIView {
 
     public var blank:Blank! {
         didSet {
-            self.imageView.image = blank.image
+            self.imageView.image = blank.isAnimating ? blank.loadingImage : blank.image
             self.titleLabel.attributedText = blank.title
             self.descLabel.attributedText = blank.desc
         }
@@ -413,6 +414,14 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 view.snp.remakeConstraints { (make) in
                     make.size.equalToSuperview()
                     make.center.equalToSuperview()
+                }
+                
+                if view.blank.isAnimating {
+                    if let animation = view.blank.animation {
+                        self.blankView.imageView.layer.add(animation, forKey: "BlankImageViewAnimationKey")
+                    }
+                }else if self.blankView.imageView.layer.animation(forKey: "BlankImageViewAnimationKey") != nil {
+                    self.blankView.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
                 }
             }
             
