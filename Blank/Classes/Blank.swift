@@ -277,8 +277,8 @@ public class BlankView: UIView {
             contentView.addSubview(imageView)
             imageView.snp_makeConstraints { (make) in
                 make.top.equalTo(lastConstraint)
-                make.width.centerX.equalToSuperview()
-                make.height.equalTo(50)
+                make.centerX.equalToSuperview()
+                make.size.equalTo(imageView.image?.size ?? 0)
             }
             lastConstraint = imageView.snp.bottom
         }
@@ -435,7 +435,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
         return self.blank != nil;
     }
     
-    private func itemsCount() -> (Int) {
+    public func itemsCount() -> (Int) {
         
         var items = 0
         
