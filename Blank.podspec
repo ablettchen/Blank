@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Blank'
-  s.version          = '0.1.3'
+  s.version          = '0.1.2'
   s.summary          = 'blank view config.'
 
 # This description is used to generate tags and improve search results.
