@@ -114,11 +114,11 @@ public class Blank: NSObject {
         case .noNetwork:
             title = NSAttributedString(string: "哎呀,断网了～")
         }
-        return Blank.init(type: type, image: defaultBlankImage(type: type), title: title, desc: nil, tap: nil)
+        return Blank(type: type, image: defaultBlankImage(type: type), title: title, desc: nil, tap: nil)
     }
     
     private class func blankBundle() -> Bundle? {
-        if let bundlePath = Bundle.init(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
+        if let bundlePath = Bundle(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
             return Bundle(path: bundlePath)
         }
         return nil
@@ -135,7 +135,7 @@ public class Blank: NSObject {
         }
     }
 
-    public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer)->(Void))? ) {
+    public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer) -> (Void))? ) {
 
         self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
         self.tap = tap
@@ -154,7 +154,7 @@ private var kImageView = "kImageView"
 
 public class BlankView: UIView {
     
-    private var conf:BLankConf!
+    private var conf: BLankConf!
     
     private lazy var contentView: UIView = {
         let view = UIView()
@@ -193,7 +193,7 @@ public class BlankView: UIView {
         return label
     }()
 
-    public var blank:Blank! {
+    public var blank: Blank! {
         didSet {
             self.imageView.image = blank.isAnimating ? blank.loadingImage : blank.image
             self.titleLabel.attributedText = blank.title
@@ -201,7 +201,7 @@ public class BlankView: UIView {
         }
     }
     
-    public var update: (_ closure: (_ conf:BLankConf)-> (Void)) -> Void {
+    public var update: (_ closure: (_ conf:BLankConf) -> (Void)) -> Void {
         get {
             return { (cls) -> Void in
                 

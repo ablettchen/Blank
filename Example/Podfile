@@ -1,12 +1,8 @@
 use_frameworks!
 inhibit_all_warnings!
+platform :ios, '9.0'
 
 target 'Blank_Example' do
   pod 'Blank', :path => '../'
 
-  target 'Blank_Tests' do
-    inherit! :search_paths
-
-    
-  end
 end
