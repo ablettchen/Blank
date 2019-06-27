@@ -275,7 +275,7 @@ public class BlankView: UIView {
         
         if canShowImage {
             contentView.addSubview(imageView)
-            imageView.snp_makeConstraints { (make) in
+            imageView.snp.remakeConstraints { (make) in
                 make.top.equalTo(lastConstraint)
                 make.centerX.equalToSuperview()
                 make.size.equalTo(imageView.image?.size ?? 0)
@@ -285,7 +285,7 @@ public class BlankView: UIView {
         
         if canShowTitle {
             contentView.addSubview(titleLabel)
-            titleLabel.snp_makeConstraints { (make) in
+            titleLabel.snp.makeConstraints { (make) in
                 make.top.equalTo(lastConstraint).offset(canShowImage ? conf.titleToImagePadding : 0.0)
                 make.width.centerX.equalTo(contentView)
             }
@@ -294,7 +294,7 @@ public class BlankView: UIView {
 
         if canShowDesc {
             contentView.addSubview(descLabel)
-            descLabel.snp_makeConstraints { (make) in
+            descLabel.snp.makeConstraints { (make) in
                 make.top.equalTo(lastConstraint).offset(canShowTitle ? conf.descToTitlePadding : 0.0)
                 make.width.centerX.equalTo(contentView)
             }
@@ -406,6 +406,8 @@ extension UIScrollView: UIGestureRecognizerDelegate {
             
             if let view = blankView {
                 
+                view.reset()
+                
                 if view.superview == nil {
                     if (self is UITableView || self is UICollectionView) || subviews.count > 1 {
                         self.insertSubview(view, at: 0)
@@ -413,17 +415,17 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                         self.addSubview(view);
                     }
                 }
-                
-                view.reset()
-                view.blank = blank
-                view.isHidden = false
-                view.prepare()
-                
+
                 view.snp.remakeConstraints { (make) in
                     make.size.equalToSuperview()
                     make.center.equalToSuperview()
                 }
                 
+                view.blank = blank
+                view.isHidden = false
+                
+                view.prepare()
+                self.isScrollEnabled = false
             }
             
         }else if blankVisiable {
