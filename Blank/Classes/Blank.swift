@@ -417,8 +417,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 }
 
                 view.snp.remakeConstraints { (make) in
-                    make.size.equalToSuperview()
-                    make.center.equalToSuperview()
+                    make.size.centerX.centerY.equalToSuperview()
                 }
                 
                 view.blank = blank
