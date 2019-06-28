@@ -44,7 +44,7 @@ public class BLankConf: NSObject {
     public var descToTitlePadding: Float!
     
     /// tap action enable or disable
-    public var tapEnable: Bool!
+    public var isTapEnable: Bool!
     
     override init() {
         super.init()
@@ -64,7 +64,7 @@ public class BLankConf: NSObject {
         self.verticalOffset = 0.0
         self.titleToImagePadding = 15.0
         self.descToTitlePadding = 10.0
-        self.tapEnable = true
+        self.isTapEnable = true
     }
 }
 
@@ -90,6 +90,9 @@ public class Blank: NSObject {
     
     /// is animating
     public var isAnimating: Bool = false
+    
+    /// is tap enable
+    public var isTapEnable: Bool = true
     
     /// animation
     public var animation: CAAnimation! {
@@ -361,7 +364,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                     config.verticalOffset       = conf.verticalOffset
                     config.titleToImagePadding  = conf.titleToImagePadding
                     config.descToTitlePadding   = conf.descToTitlePadding
-                    config.tapEnable            = conf.tapEnable
+                    config.isTapEnable          = conf.isTapEnable
                 }
             }
         }
@@ -395,6 +398,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     @objc private func tapAction(_ gesture:UITapGestureRecognizer) -> Void {
+        if !self.blank.isTapEnable {return}
         if let tap = self.blank.tap {
             tap(gesture)
         }
