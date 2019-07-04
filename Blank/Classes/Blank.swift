@@ -15,7 +15,7 @@ public enum BlankType: Int, CustomStringConvertible {
     case fail
     case noData
     case noNetwork
-
+    
     public var description: String {
         switch self {
         case .fail:         return "fail"
@@ -59,7 +59,7 @@ public class BLankConf: NSObject {
         
         self.descFont = .systemFont(ofSize: 12)
         self.descColor = .gray
-
+        
         self.verticalOffset = 0.0
         self.titleToImagePadding = 15.0
         self.descToTitlePadding = 10.0
@@ -82,7 +82,7 @@ public class Blank: NSObject {
     public var desc: NSAttributedString?
     
     /// blank view tap action
-    public var tap: ((_ :UITapGestureRecognizer)->(Void))?
+    public var tap: ((_ :UITapGestureRecognizer) -> (Void))?
     
     /// loadingView
     public var loadingImage: UIImage?
@@ -94,17 +94,15 @@ public class Blank: NSObject {
     public var isTapEnable: Bool = true
     
     /// animation
-    public var animation: CAAnimation! {
-        get {
-            let ani = CABasicAnimation(keyPath: "transform")
-            ani.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
-            ani.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat.pi*2, 0.0, 0.0, 1.0))
-            ani.duration = 0.25
-            ani.isCumulative = true
-            ani.repeatCount = MAXFLOAT
-            return ani
-        }
-    }
+    lazy public var animation: CAAnimation! = {
+        let ani = CABasicAnimation(keyPath: "transform")
+        ani.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
+        ani.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat.pi/2, 0.0, 0.0, 1.0))
+        ani.duration = 0.25
+        ani.isCumulative = true
+        ani.repeatCount = MAXFLOAT
+        return ani
+    }()
     
     public class func defaultBlank(type: BlankType) -> Blank {
         var title: NSAttributedString!
@@ -136,9 +134,9 @@ public class Blank: NSObject {
             return UIImage(named: "blank_nonetwork", in: blankBundle(), compatibleWith: nil)
         }
     }
-
+    
     public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer) -> (Void))? ) {
-
+        
         super.init()
         
         self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
@@ -193,7 +191,7 @@ public class BlankView: UIView {
         label.accessibilityIdentifier = "blank desc"
         return label
     }()
-
+    
     public var blank: Blank! {
         didSet {
             self.imageView.image = blank.isAnimating ? blank.loadingImage : blank.image
@@ -210,7 +208,7 @@ public class BlankView: UIView {
                 cls(self.conf)
                 
                 self.backgroundColor = self.conf.backgorundColor
-
+                
                 /// title label
                 self.titleLabel.font = self.conf.titleFont
                 self.titleLabel.textColor = self.conf.titleColor
@@ -250,7 +248,7 @@ public class BlankView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     public func reset() -> Void {
         for view in contentView.subviews {view.removeFromSuperview()}
         contentView.alpha = 0
@@ -260,7 +258,7 @@ public class BlankView: UIView {
     }
     
     public func prepare() -> Void {
-
+        
         imageView.isHidden = !canShowImage
         titleLabel.isHidden = !canShowTitle
         descLabel.isHidden = !canShowDesc
@@ -270,7 +268,7 @@ public class BlankView: UIView {
             make.width.equalToSuperview()
             make.center.equalToSuperview()
         }
-
+        
         var lastConstraint = contentView.snp.top
         
         if canShowImage {
@@ -291,7 +289,7 @@ public class BlankView: UIView {
             }
             lastConstraint = titleLabel.snp_bottom
         }
-
+        
         if canShowDesc {
             contentView.addSubview(descLabel)
             descLabel.snp.makeConstraints { (make) in
@@ -324,7 +322,7 @@ private var kBlankView = "kBlankView"
 private var kBlank = "kBlank"
 
 extension UIScrollView: UIGestureRecognizerDelegate {
-
+    
     public var blankVisiable:Bool {
         get {
             return (blankView != nil);
@@ -402,7 +400,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     public func reloadBlank() -> Void {
-
+        
         if canDisplay() && itemsCount() == 0 {
             
             if let view = blankView {
@@ -416,7 +414,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                         self.addSubview(view);
                     }
                 }
-
+                
                 view.snp.remakeConstraints { (make) in
                     make.size.centerX.centerY.equalToSuperview()
                 }
