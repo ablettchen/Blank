@@ -49,7 +49,6 @@ public class BLankConf: NSObject {
     override init() {
         super.init()
         reset()
-        
     }
     
     public func reset() -> Void {
@@ -140,10 +139,10 @@ public class Blank: NSObject {
 
     public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer) -> (Void))? ) {
 
+        super.init()
+        
         self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
         self.tap = tap
-        
-        super.init()
         
         self.type = type
         self.image = image
@@ -171,7 +170,6 @@ public class BlankView: UIView {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
         view.contentMode = .scaleAspectFit
-        view.isUserInteractionEnabled = false
         view.accessibilityIdentifier = "blank image"
         return view
     }()
@@ -259,7 +257,6 @@ public class BlankView: UIView {
         imageView.image = nil
         titleLabel.text = nil
         descLabel.text = nil
-        contentView.snp.removeConstraints()
     }
     
     public func prepare() -> Void {
@@ -269,7 +266,7 @@ public class BlankView: UIView {
         descLabel.isHidden = !canShowDesc
         
         self.addSubview(contentView)
-        contentView.snp.makeConstraints { (make) in
+        contentView.snp.remakeConstraints { (make) in
             make.width.equalToSuperview()
             make.center.equalToSuperview()
         }
