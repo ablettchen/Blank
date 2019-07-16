@@ -393,6 +393,7 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     }
     
     @objc private func tapAction(_ gesture:UITapGestureRecognizer) -> Void {
+        if self.blank == nil {return}
         if !self.blank.isTapEnable {return}
         if let tap = self.blank.tap {
             tap(gesture)
