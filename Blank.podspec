@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Blank'
-  s.version          = '0.1.8'
+  s.version          = '0.2.0'
   s.summary          = 'blank view config.'
   s.homepage         = 'https://github.com/ablettchen/Blank'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/ablettchen'
   
   s.ios.deployment_target = '8.0'
-  s.swift_versions = '4.0'
+  s.swift_versions = '5.0'
   
   s.source_files = 'Blank/Classes/**/*'
   s.resource_bundles = {
