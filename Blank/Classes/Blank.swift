@@ -358,7 +358,7 @@ extension UIScrollView {
     }
 }
 
-extension UIView: UIGestureRecognizerDelegate {
+extension UIView {
     
     public var blankVisiable:Bool {
         get {
@@ -417,7 +417,6 @@ extension UIView: UIGestureRecognizerDelegate {
             let view:BlankView = BlankView(frame: frame);
             
             let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(at_tapAction))
-            tapGesture.delegate = self
             view.isUserInteractionEnabled = true
             view.addGestureRecognizer(tapGesture)
             
