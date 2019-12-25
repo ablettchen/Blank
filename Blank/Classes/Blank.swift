@@ -416,7 +416,7 @@ extension UIView: UIGestureRecognizerDelegate {
             }
             let view:BlankView = BlankView(frame: frame);
             
-            let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapAction(_:)))
+            let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(at_tapAction))
             tapGesture.delegate = self
             view.isUserInteractionEnabled = true
             view.addGestureRecognizer(tapGesture)
@@ -429,12 +429,16 @@ extension UIView: UIGestureRecognizerDelegate {
         }
     }
     
-    @objc private func tapAction(_ gesture:UITapGestureRecognizer) -> Void {
+    @objc private func at_tapAction(_ gesture:UITapGestureRecognizer) -> Void {
         if self.blank == nil {return}
         if !self.blank.isTapEnable {return}
         if let tap = self.blank.tap {
             tap(gesture)
         }
+    }
+    
+    public func resetBlank() {
+        if blankVisiable {invalidate()}
     }
     
     public func reloadBlank() -> Void {
@@ -446,7 +450,7 @@ extension UIView: UIGestureRecognizerDelegate {
             let sv: UIScrollView = self as! UIScrollView
             count = sv.itemsCount()
         }
-        
+
         if count == 0 {
             
             if let view = blankView {
