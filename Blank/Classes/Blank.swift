@@ -26,7 +26,7 @@ public enum BlankType: Int, CustomStringConvertible {
 }
 
 public class BLankConf: NSObject {
-    
+     
     /// backgorundColor
     public var backgorundColor: UIColor!
     
@@ -321,11 +321,48 @@ public class BlankView: UIView {
 private var kBlankView = "kBlankView"
 private var kBlank = "kBlank"
 
-extension UIScrollView: UIGestureRecognizerDelegate {
+extension UIScrollView {
+    
+    public func itemsCount() -> (Int) {
+        
+        var items = 0
+        
+        if let tableView = self as? UITableView {
+            var sections = 1
+            
+            if let dataSource = tableView.dataSource {
+                if dataSource.responds(to: #selector(UITableViewDataSource.numberOfSections(in:))) {
+                    sections = dataSource.numberOfSections!(in: tableView)
+                }
+                if dataSource.responds(to: #selector(UITableViewDataSource.tableView(_:numberOfRowsInSection:))) {
+                    for i in 0 ..< sections {
+                        items += dataSource.tableView(tableView, numberOfRowsInSection: i)
+                    }
+                }
+            }
+        } else if let collectionView = self as? UICollectionView {
+            var sections = 1
+            
+            if let dataSource = collectionView.dataSource {
+                if dataSource.responds(to: #selector(UICollectionViewDataSource.numberOfSections(in:))) {
+                    sections = dataSource.numberOfSections!(in: collectionView)
+                }
+                if dataSource.responds(to: #selector(UICollectionViewDataSource.collectionView(_:numberOfItemsInSection:))) {
+                    for i in 0 ..< sections {
+                        items += dataSource.collectionView(collectionView, numberOfItemsInSection: i)
+                    }
+                }
+            }
+        }
+        return items
+    }
+}
+
+extension UIView: UIGestureRecognizerDelegate {
     
     public var blankVisiable:Bool {
         get {
-            return (blankView != nil);
+            return (blankView != nil) ? !blankView.isHidden : false;
         }
     }
     
@@ -402,7 +439,15 @@ extension UIScrollView: UIGestureRecognizerDelegate {
     
     public func reloadBlank() -> Void {
         
-        if canDisplay() && itemsCount() == 0 {
+        if canDisplay() == false {return}
+        
+        var count = 0
+        if (self is UIScrollView) {
+            let sv: UIScrollView = self as! UIScrollView
+            count = sv.itemsCount()
+        }
+        
+        if count == 0 {
             
             if let view = blankView {
                 
@@ -424,7 +469,10 @@ extension UIScrollView: UIGestureRecognizerDelegate {
                 view.isHidden = false
                 
                 view.prepare()
-                self.isScrollEnabled = false
+                if (self is UIScrollView) {
+                    let sv: UIScrollView = self as! UIScrollView
+                    sv.isScrollEnabled = false
+                }
             }
             
         }else if blankVisiable {
@@ -436,47 +484,16 @@ extension UIScrollView: UIGestureRecognizerDelegate {
         return self.blank != nil;
     }
     
-    public func itemsCount() -> (Int) {
-        
-        var items = 0
-        
-        if let tableView = self as? UITableView {
-            var sections = 1
-            
-            if let dataSource = tableView.dataSource {
-                if dataSource.responds(to: #selector(UITableViewDataSource.numberOfSections(in:))) {
-                    sections = dataSource.numberOfSections!(in: tableView)
-                }
-                if dataSource.responds(to: #selector(UITableViewDataSource.tableView(_:numberOfRowsInSection:))) {
-                    for i in 0 ..< sections {
-                        items += dataSource.tableView(tableView, numberOfRowsInSection: i)
-                    }
-                }
-            }
-        } else if let collectionView = self as? UICollectionView {
-            var sections = 1
-            
-            if let dataSource = collectionView.dataSource {
-                if dataSource.responds(to: #selector(UICollectionViewDataSource.numberOfSections(in:))) {
-                    sections = dataSource.numberOfSections!(in: collectionView)
-                }
-                if dataSource.responds(to: #selector(UICollectionViewDataSource.collectionView(_:numberOfItemsInSection:))) {
-                    for i in 0 ..< sections {
-                        items += dataSource.collectionView(collectionView, numberOfItemsInSection: i)
-                    }
-                }
-            }
-        }
-        return items
-    }
-    
     private func invalidate() -> (Void) {
         if let view = blankView {
             view.reset()
             view.isHidden = true
             view.removeFromSuperview()
         }
-        self.isScrollEnabled = true
+        if (self is UIScrollView) {
+            let sv: UIScrollView = self as! UIScrollView
+            sv.isScrollEnabled = true
+        }
     }
     
 }

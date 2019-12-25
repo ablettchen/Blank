@@ -15,35 +15,28 @@
 
 import Blank
 
-    /// add scrollView
-    let scrollView = UIScrollView()
-    self.view.addSubview(scrollView)
-    scrollView.snp_makeConstraints { (make) in
-        make.edges.equalTo(self.view)
-    }
-    
     /// make blank
-    var num = 0
-    let blank:Blank = Blank(type: .fail, image:Blank.defaultBlankImage(type: .fail), title: NSAttributedString(string: "请求失败"), desc: NSAttributedString(string: "10014")) { (tap) -> (Void) in
-        num += 1
-        print("clicked:\(num)")
+        var num = 0
+        let blank:Blank = Blank(type: .fail, image:Blank.defaultBlankImage(type: .fail), title: NSAttributedString(string: "请求失败"), desc: NSAttributedString(string: "10014")) { (tap) -> (Void) in
+            num += 1
+            print("clicked:\(num)")
+            self.view.blankConfReset()
+        }
         
-        scrollView.blankConfReset()
-    }
-    
-    /// set blank and reload
-    scrollView.setBlank(blank)
-    scrollView.reloadBlank()
-    
-    /// update style
-    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
-        scrollView.updateBlankConf {
-            (conf) in
-            conf.backgorundColor = .black
-            conf.titleFont = UIFont.boldSystemFont(ofSize: 14);
-            conf.titleColor = .white
-            conf.descFont = UIFont.boldSystemFont(ofSize: 14);
-            conf.descColor = .white
+        /// set blank and reload
+        view.setBlank(blank)
+        view.reloadBlank()
+        
+        /// update style
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
+            self.view.updateBlankConf {
+                (conf) in
+                conf.backgorundColor = .black
+                conf.titleFont = UIFont.boldSystemFont(ofSize: 14);
+                conf.titleColor = .white
+                conf.descFont = UIFont.boldSystemFont(ofSize: 14);
+                conf.descColor = .white
+            }
         }
     }
 
