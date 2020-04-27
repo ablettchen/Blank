@@ -202,19 +202,19 @@ public class BlankView: UIView {
     
     public var update: (_ closure: (_ conf:BLankConf) -> (Void)) -> Void {
         get {
-            return { (cls) -> Void in
+            return { [weak self] (cls) in
                 
-                if self.conf == nil { self.conf = BLankConf() }
-                cls(self.conf)
+                if self?.conf == nil {self?.conf = BLankConf()}
+                if self != nil {cls(self!.conf)}
                 
-                self.backgroundColor = self.conf.backgorundColor
+                self?.backgroundColor = self!.conf.backgorundColor
                 
                 /// title label
-                self.titleLabel.font = self.conf.titleFont
-                self.titleLabel.textColor = self.conf.titleColor
+                self?.titleLabel.font = self!.conf.titleFont
+                self?.titleLabel.textColor = self!.conf.titleColor
                 /// desc label
-                self.descLabel.font = self.conf.descFont
-                self.descLabel.textColor = self.conf.descColor
+                self?.descLabel.font = self!.conf.descFont
+                self?.descLabel.textColor = self!.conf.descColor
             }
         }
     }
@@ -311,8 +311,8 @@ public class BlankView: UIView {
             self.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
         }
         
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: {
-            self.contentView.alpha = 1.0
+        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: { [weak self] in
+            self?.contentView.alpha = 1.0
         }) { (finished) in }
         
     }
@@ -381,13 +381,12 @@ extension UIView {
     
     public var updateBlankConf: (_ closure: (_ conf:BLankConf)-> (Void)) -> Void {
         get {
-            return { (cls) -> Void in
+            return { (cls) in
                 
                 let conf = BLankConf()
                 cls(conf)
                 
-                self.blankView.update {
-                    (config) in
+                self.blankView.update { (config) in
                     config.backgorundColor      = conf.backgorundColor
                     config.titleFont            = conf.titleFont
                     config.titleColor           = conf.titleColor
@@ -403,8 +402,7 @@ extension UIView {
     }
     
     public func blankConfReset() -> Void {
-        self.blankView.update {
-            (conf) in
+        self.blankView.update { (conf) in
             conf.reset()
         }
     }
