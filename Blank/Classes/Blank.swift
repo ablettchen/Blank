@@ -69,6 +69,9 @@ public class BLankConf: NSObject {
 
 public class Blank: NSObject {
     
+    /// custom blank view
+    public var customBlankView: UIView?
+    
     /// blank type
     public var type: BlankType = .fail
     
@@ -362,6 +365,9 @@ extension UIView {
     
     public var blankVisiable:Bool {
         get {
+            guard self.blank.customBlankView == nil else {
+                return !self.blank.customBlankView!.isHidden
+            }
             return (blankView != nil) ? !blankView.isHidden : false;
         }
     }
@@ -450,30 +456,40 @@ extension UIView {
 
         if count == 0 {
             
-            if let view = blankView {
-                
-                view.reset()
+            let addBlankView:((_ view: UIView) -> Void)? = { [weak self] (view) in
                 
                 if view.superview == nil {
-                    if (self is UITableView || self is UICollectionView) || subviews.count > 1 {
-                        self.insertSubview(view, at: 0)
+                    if (self is UITableView || self is UICollectionView) || (self?.subviews.count ?? 0) > 1 {
+                        self?.insertSubview(view, at: 0)
                     }else {
-                        self.addSubview(view);
+                        self?.addSubview(view);
                     }
                 }
                 
                 view.snp.remakeConstraints { (make) in
                     make.size.centerX.centerY.equalToSuperview()
                 }
+            }
+            
+            
+            if let view = self.blank.customBlankView {
                 
-                view.blank = blank
+                addBlankView?(view)
                 view.isHidden = false
                 
+            }else if let view = blankView {
+                
+                view.reset()
+                addBlankView?(view)
+                view.isHidden = false
+                view.blank = blank
+                view.isHidden = false
                 view.prepare()
-                if (self is UIScrollView) {
-                    let sv: UIScrollView = self as! UIScrollView
-                    sv.isScrollEnabled = false
-                }
+            }
+            
+            if (self is UIScrollView) {
+                let sv: UIScrollView = self as! UIScrollView
+                sv.isScrollEnabled = false
             }
             
         }else if blankVisiable {
@@ -486,7 +502,11 @@ extension UIView {
     }
     
     private func invalidate() -> (Void) {
-        if let view = blankView {
+        
+        if let view = self.blank?.customBlankView {
+            view.isHidden = true
+            view.removeFromSuperview()
+        }else if let view = blankView {
             view.reset()
             view.isHidden = true
             view.removeFromSuperview()
