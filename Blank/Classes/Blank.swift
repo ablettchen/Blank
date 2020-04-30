@@ -365,8 +365,8 @@ extension UIView {
     
     public var blankVisiable:Bool {
         get {
-            guard self.blank.customBlankView == nil else {
-                return !self.blank.customBlankView!.isHidden
+            guard self.blank?.customBlankView == nil else {
+                return !(self.blank?.customBlankView?.isHidden ?? true)
             }
             return (blankView != nil) ? !blankView.isHidden : false;
         }
