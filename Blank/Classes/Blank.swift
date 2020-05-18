@@ -53,13 +53,10 @@ public class BLankConf: NSObject {
     
     public func reset() -> Void {
         self.backgorundColor = .white
-        
         self.titleFont = .systemFont(ofSize: 14)
         self.titleColor = .darkGray
-        
         self.descFont = .systemFont(ofSize: 12)
         self.descColor = .gray
-        
         self.verticalOffset = 0.0
         self.titleToImagePadding = 15.0
         self.descToTitlePadding = 10.0
@@ -97,14 +94,14 @@ public class Blank: NSObject {
     public var isTapEnable: Bool = true
     
     /// animation
-    lazy public var animation: CAAnimation! = {
-        let ani = CABasicAnimation(keyPath: "transform")
-        ani.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
-        ani.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat.pi/2, 0.0, 0.0, 1.0))
-        ani.duration = 0.25
-        ani.isCumulative = true
-        ani.repeatCount = MAXFLOAT
-        return ani
+    lazy public var animation: CAAnimation = {
+        let anim = CABasicAnimation(keyPath: "transform")
+        anim.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
+        anim.toValue = NSValue(caTransform3D: CATransform3DMakeRotation(CGFloat.pi / 2.0, 0.0, 0.0, 1.0))
+        anim.duration = 0.25
+        anim.isCumulative = true
+        anim.repeatCount = MAXFLOAT
+        return anim
     }()
     
     public class func defaultBlank(type: BlankType) -> Blank {
@@ -138,18 +135,24 @@ public class Blank: NSObject {
         }
     }
     
-    public init(type: BlankType, image: UIImage?, title :NSAttributedString!, desc: NSAttributedString?, tap: ((_ :UITapGestureRecognizer) -> (Void))? ) {
-        
+    public init(type: BlankType, image: UIImage? = nil, title: NSAttributedString?, desc: NSAttributedString? = nil, tap: ((_ :UITapGestureRecognizer) -> (Void))? = nil) {
         super.init()
-        
         self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
         self.tap = tap
-        
         self.type = type
         self.image = image
         self.title = title
         self.desc = desc
-        
+    }
+    
+    public init(type: BlankType, image: UIImage? = nil, title: String?, desc: String? = nil, tap: ((_ :UITapGestureRecognizer) -> (Void))? = nil) {
+        super.init()
+        self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
+        self.tap = tap
+        self.type = type
+        self.image = image
+        if let title = title {self.title = NSAttributedString.init(string: title)}
+        if let desc = desc {self.desc = NSAttributedString.init(string: desc)}
     }
 }
 
@@ -243,8 +246,7 @@ public class BlankView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.conf = BLankConf()
-        self.update {
-            (conf) in
+        self.update { (conf) in
         }
     }
     
@@ -307,9 +309,7 @@ public class BlankView: UIView {
         }
         
         if self.blank.isAnimating {
-            if let animation = self.blank.animation {
-                self.imageView.layer.add(animation, forKey: "BlankImageViewAnimationKey")
-            }
+            self.imageView.layer.add(self.blank.animation, forKey: "BlankImageViewAnimationKey")
         }else if self.imageView.layer.animation(forKey: "BlankImageViewAnimationKey") != nil {
             self.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
         }
@@ -363,7 +363,7 @@ extension UIScrollView {
 
 extension UIView {
     
-    public var blankVisiable:Bool {
+    public var blankVisiable: Bool {
         get {
             guard self.blank?.customBlankView == nil else {
                 return !(self.blank?.customBlankView?.isHidden ?? true)
@@ -378,10 +378,8 @@ extension UIView {
         }
     }
     
-    public func setBlank(_ newValue:Blank) -> Void {
-        if !canDisplay() {
-            invalidate()
-        }
+    public func setBlank(_ newValue: Blank) -> Void {
+        if !canDisplay() {invalidate()}
         objc_setAssociatedObject(self, &kBlank, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
@@ -435,9 +433,7 @@ extension UIView {
     @objc private func at_tapAction(_ gesture:UITapGestureRecognizer) -> Void {
         if self.blank == nil {return}
         if !self.blank.isTapEnable {return}
-        if let tap = self.blank.tap {
-            tap(gesture)
-        }
+        if let tap = self.blank.tap {tap(gesture)}
     }
     
     public func resetBlank() {
@@ -456,7 +452,7 @@ extension UIView {
 
         if count == 0 {
             
-            let addBlankView:((_ view: UIView) -> Void)? = { [weak self] (view) in
+            let addBlankView: ((_ view: UIView) -> Void)? = { [weak self] (view) in
                 
                 if view.superview == nil {
                     if (self is UITableView || self is UICollectionView) || (self?.subviews.count ?? 0) > 1 {

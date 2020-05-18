@@ -30,8 +30,7 @@ class ViewController: UIViewController {
         
         /// update style
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
-            self.view.updateBlankConf {
-                (conf) in
+            self.view.updateBlankConf { (conf) in
                 conf.backgorundColor = .black
                 conf.titleFont = UIFont.boldSystemFont(ofSize: 14);
                 conf.titleColor = .white

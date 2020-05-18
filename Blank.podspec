@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Blank'
-  s.version          = '0.2.6'
+  s.version          = '0.2.7'
   s.summary          = 'blank view config.'
   s.homepage         = 'https://github.com/ablettchen/Blank'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
