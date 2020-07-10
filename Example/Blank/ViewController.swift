@@ -26,8 +26,10 @@ class ViewController: UIViewController {
         
         /// set blank and reload
         view.setBlank(blank)
-        view.reloadBlank()
-        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
+            self.view.reloadBlank()
+        }
+
         /// update style
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
             self.view.updateBlankConf { (conf) in
@@ -36,6 +38,7 @@ class ViewController: UIViewController {
                 conf.titleColor = .white
                 conf.descFont = UIFont.boldSystemFont(ofSize: 14);
                 conf.descColor = .white
+                conf.verticalOffset = 200
             }
         }
     }

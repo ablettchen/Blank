@@ -221,6 +221,14 @@ public class BlankView: UIView {
                 /// desc label
                 self?.descLabel.font = self!.conf.descFont
                 self?.descLabel.textColor = self!.conf.descColor
+                
+                self?.isUserInteractionEnabled = self!.conf.isTapEnable
+                
+                if let sview = self?.contentView.superview {
+                    self?.contentView.snp.updateConstraints({ (make) in
+                        make.centerY.equalTo(sview).offset((self?.conf.verticalOffset ?? 0))
+                    })
+                }
             }
         }
     }
@@ -305,7 +313,11 @@ public class BlankView: UIView {
         }
         
         contentView.snp.makeConstraints { (make) in
-            make.bottom.equalTo(lastConstraint).offset(conf.verticalOffset)
+            make.bottom.equalTo(lastConstraint)
+        }
+        
+        contentView.snp.updateConstraints { (make) in
+            make.centerY.equalToSuperview().offset(conf.verticalOffset)
         }
         
         if self.blank.isAnimating {
