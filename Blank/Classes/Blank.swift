@@ -10,10 +10,16 @@ import Foundation
 import UIKit
 import SnapKit
 
-/// blank view type
+/// 空白页类型
 public enum BlankType: Int, CustomStringConvertible {
+    
+    /// 请求失败
     case fail
+    
+    /// 无数据
     case noData
+    
+    /// 无网络连接
     case noNetwork
     
     public var description: String {
@@ -25,75 +31,37 @@ public enum BlankType: Int, CustomStringConvertible {
     }
 }
 
-public class BLankConf: NSObject {
-     
-    /// backgorundColor
-    public var backgorundColor: UIColor!
-    
-    /// title
-    public var titleFont: UIFont!
-    public var titleColor: UIColor!
-    
-    /// desc
-    public var descFont: UIFont!
-    public var descColor: UIColor!
-    
-    /// layout parameters
-    public var verticalOffset: Float!
-    public var titleToImagePadding: Float!
-    public var descToTitlePadding: Float!
-    
-    /// tap action enable or disable
-    public var isTapEnable: Bool!
-    
-    override init() {
-        super.init()
-        reset()
-    }
-    
-    public func reset() -> Void {
-        self.backgorundColor = .white
-        self.titleFont = .systemFont(ofSize: 14)
-        self.titleColor = .darkGray
-        self.descFont = .systemFont(ofSize: 12)
-        self.descColor = .gray
-        self.verticalOffset = 0.0
-        self.titleToImagePadding = 15.0
-        self.descToTitlePadding = 10.0
-        self.isTapEnable = true
-    }
-}
-
+/// 空白页描述
 public class Blank: NSObject {
     
-    /// custom blank view
+    /// 自定义视图
     public var customBlankView: UIView?
     
-    /// blank type
+    /// 类型
     public var type: BlankType = .fail
     
-    /// blank image
+    /// 图片
     public var image: UIImage?
     
-    /// blank title
+    /// 标题
     public var title: NSAttributedString?
     
-    /// blank desc
+    /// 描述
     public var desc: NSAttributedString?
     
-    /// blank view tap action
+    /// 点击事件
     public var tap: ((_ :UITapGestureRecognizer) -> (Void))?
     
-    /// loadingView
+    /// 加载图片
     public var loadingImage: UIImage?
     
-    /// is animating
+    /// 是否正在执行动画
     public var isAnimating: Bool = false
     
-    /// is tap enable
+    /// 是否允许点击
     public var isTapEnable: Bool = true
     
-    /// animation
+    /// 旋转动画
     lazy public var animation: CAAnimation = {
         let anim = CABasicAnimation(keyPath: "transform")
         anim.fromValue = NSValue(caTransform3D: CATransform3DIdentity)
@@ -104,7 +72,10 @@ public class Blank: NSObject {
         return anim
     }()
     
-    public class func defaultBlank(type: BlankType) -> Blank {
+    /// 默认空白页描述
+    /// - Parameter type: 类型
+    /// - Returns: 空白页描述实例
+    public static func `default`(type: BlankType) -> Blank {
         var title: NSAttributedString!
         switch type {
         case .fail:
@@ -114,30 +85,30 @@ public class Blank: NSObject {
         case .noNetwork:
             title = NSAttributedString(string: "哎呀,断网了～")
         }
-        return Blank(type: type, image: defaultBlankImage(type: type), title: title, desc: nil, tap: nil)
+        return Blank(type: type, image: defaultImage(type: type), title: title, desc: nil, tap: nil)
     }
     
-    private class func blankBundle() -> Bundle? {
-        if let bundlePath = Bundle(for: Blank.self).resourcePath?.appending("/Blank.bundle") {
-            return Bundle(path: bundlePath)
-        }
-        return nil
-    }
-    
-    public class func defaultBlankImage(type: BlankType) -> UIImage? {
+    /// 获取默认图片
+    /// - Parameter type: 类型
+    /// - Returns: 图片
+    public class func defaultImage(type: BlankType) -> UIImage? {
         switch type {
-        case .fail:
-            return UIImage(named: "blank_fail", in: blankBundle(), compatibleWith: nil)
-        case .noData:
-            return UIImage(named: "blank_nodata", in: blankBundle(), compatibleWith: nil)
-        case .noNetwork:
-            return UIImage(named: "blank_nonetwork", in: blankBundle(), compatibleWith: nil)
+        case .fail:         return UIImage.inBlank(named: "blank_fail")
+        case .noData:       return UIImage.inBlank(named: "blank_nodata")
+        case .noNetwork:    return UIImage.inBlank(named: "blank_nonetwork")
         }
     }
     
+    /// 初始化方法
+    /// - Parameters:
+    ///   - type: 类型
+    ///   - image: 图片
+    ///   - title: 标题
+    ///   - desc: 描述
+    ///   - tap: 点击事件
     public init(type: BlankType, image: UIImage? = nil, title: NSAttributedString?, desc: NSAttributedString? = nil, tap: ((_ :UITapGestureRecognizer) -> (Void))? = nil) {
         super.init()
-        self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
+        self.loadingImage = UIImage.inBlank(named: "blank_loading_circle")
         self.tap = tap
         self.type = type
         self.image = image
@@ -145,9 +116,16 @@ public class Blank: NSObject {
         self.desc = desc
     }
     
+    /// 初始化方法
+    /// - Parameters:
+    ///   - type: 类型
+    ///   - image: 图片
+    ///   - title: 标题
+    ///   - desc: 描述
+    ///   - tap: 点击事件
     public init(type: BlankType, image: UIImage? = nil, title: String?, desc: String? = nil, tap: ((_ :UITapGestureRecognizer) -> (Void))? = nil) {
         super.init()
-        self.loadingImage = UIImage(named: "blank_loading_circle", in: Blank.blankBundle(), compatibleWith: nil)
+        self.loadingImage = UIImage.inBlank(named: "blank_loading_circle")
         self.tap = tap
         self.type = type
         self.image = image
@@ -157,224 +135,12 @@ public class Blank: NSObject {
 }
 
 private var kImageView = "kImageView"
-
-public class BlankView: UIView {
-    
-    private var conf: BLankConf!
-    
-    private lazy var contentView: UIView = {
-        let view = UIView()
-        view.isUserInteractionEnabled = true
-        view.alpha = 0
-        view.accessibilityIdentifier = "blank content view"
-        return view
-    }()
-    
-    private lazy var imageView: UIImageView = {
-        let view = UIImageView()
-        view.isUserInteractionEnabled = true
-        view.contentMode = .scaleAspectFit
-        view.accessibilityIdentifier = "blank image"
-        return view
-    }()
-    
-    private lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.isUserInteractionEnabled = true
-        label.textAlignment = .center;
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.accessibilityIdentifier = "blank title"
-        return label
-    }()
-    
-    private lazy var descLabel: UILabel = {
-        let label = UILabel()
-        label.isUserInteractionEnabled = true
-        label.textAlignment = .center;
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.accessibilityIdentifier = "blank desc"
-        return label
-    }()
-    
-    public var blank: Blank! {
-        didSet {
-            self.imageView.image = blank.isAnimating ? blank.loadingImage : blank.image
-            self.titleLabel.attributedText = blank.title
-            self.descLabel.attributedText = blank.desc
-        }
-    }
-    
-    public var update: (_ closure: (_ conf:BLankConf) -> (Void)) -> Void {
-        get {
-            return { [weak self] (cls) in
-                
-                if self?.conf == nil {self?.conf = BLankConf()}
-                if self != nil {cls(self!.conf)}
-                
-                self?.backgroundColor = self!.conf.backgorundColor
-                
-                /// title label
-                self?.titleLabel.font = self!.conf.titleFont
-                self?.titleLabel.textColor = self!.conf.titleColor
-                /// desc label
-                self?.descLabel.font = self!.conf.descFont
-                self?.descLabel.textColor = self!.conf.descColor
-                
-                self?.isUserInteractionEnabled = self!.conf.isTapEnable
-                
-                if let sview = self?.contentView.superview {
-                    self?.contentView.snp.updateConstraints({ (make) in
-                        make.centerY.equalTo(sview).offset((self?.conf.verticalOffset ?? 0))
-                    })
-                }
-            }
-        }
-    }
-    
-    private var canShowImage: Bool {
-        return ((imageView.image) != nil)
-    }
-    
-    private var canShowTitle: Bool {
-        if let attributedText = titleLabel.attributedText {
-            return (attributedText.length > 0)
-        }
-        return false
-    }
-    
-    private var canShowDesc: Bool {
-        if let attributedText = descLabel.attributedText {
-            return (attributedText.length > 0)
-        }
-        return false
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.conf = BLankConf()
-        self.update { (conf) in
-        }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public func reset() -> Void {
-        for view in contentView.subviews {view.removeFromSuperview()}
-        contentView.alpha = 0
-        imageView.image = nil
-        titleLabel.text = nil
-        descLabel.text = nil
-    }
-    
-    public func prepare() -> Void {
-        
-        imageView.isHidden = !canShowImage
-        titleLabel.isHidden = !canShowTitle
-        descLabel.isHidden = !canShowDesc
-        
-        self.addSubview(contentView)
-        contentView.snp.remakeConstraints { (make) in
-            make.width.equalToSuperview()
-            make.center.equalToSuperview()
-        }
-        
-        var lastConstraint = contentView.snp.top
-        
-        if canShowImage {
-            contentView.addSubview(imageView)
-            imageView.snp.remakeConstraints { (make) in
-                make.top.equalTo(lastConstraint)
-                make.centerX.equalToSuperview()
-                make.size.equalTo(imageView.image?.size ?? 0)
-            }
-            lastConstraint = imageView.snp.bottom
-        }
-        
-        if canShowTitle {
-            contentView.addSubview(titleLabel)
-            titleLabel.snp.makeConstraints { (make) in
-                make.top.equalTo(lastConstraint).offset(canShowImage ? conf.titleToImagePadding : 0.0)
-                make.width.centerX.equalTo(contentView)
-            }
-            lastConstraint = titleLabel.snp_bottom
-        }
-        
-        if canShowDesc {
-            contentView.addSubview(descLabel)
-            descLabel.snp.makeConstraints { (make) in
-                make.top.equalTo(lastConstraint).offset(canShowTitle ? conf.descToTitlePadding : 0.0)
-                make.width.centerX.equalTo(contentView)
-            }
-            lastConstraint = descLabel.snp_bottom
-        }
-        
-        contentView.snp.makeConstraints { (make) in
-            make.bottom.equalTo(lastConstraint)
-        }
-        
-        contentView.snp.updateConstraints { (make) in
-            make.centerY.equalToSuperview().offset(conf.verticalOffset)
-        }
-        
-        if self.blank.isAnimating {
-            self.imageView.layer.add(self.blank.animation, forKey: "BlankImageViewAnimationKey")
-        }else if self.imageView.layer.animation(forKey: "BlankImageViewAnimationKey") != nil {
-            self.imageView.layer.removeAnimation(forKey: "BlankImageViewAnimationKey")
-        }
-        
-        UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseOut, animations: { [weak self] in
-            self?.contentView.alpha = 1.0
-        }) { (finished) in }
-        
-    }
-}
-
 private var kBlankView = "kBlankView"
 private var kBlank = "kBlank"
 
-extension UIScrollView {
-    
-    public func itemsCount() -> (Int) {
-        
-        var items = 0
-        
-        if let tableView = self as? UITableView {
-            var sections = 1
-            
-            if let dataSource = tableView.dataSource {
-                if dataSource.responds(to: #selector(UITableViewDataSource.numberOfSections(in:))) {
-                    sections = dataSource.numberOfSections!(in: tableView)
-                }
-                if dataSource.responds(to: #selector(UITableViewDataSource.tableView(_:numberOfRowsInSection:))) {
-                    for i in 0 ..< sections {
-                        items += dataSource.tableView(tableView, numberOfRowsInSection: i)
-                    }
-                }
-            }
-        } else if let collectionView = self as? UICollectionView {
-            var sections = 1
-            
-            if let dataSource = collectionView.dataSource {
-                if dataSource.responds(to: #selector(UICollectionViewDataSource.numberOfSections(in:))) {
-                    sections = dataSource.numberOfSections!(in: collectionView)
-                }
-                if dataSource.responds(to: #selector(UICollectionViewDataSource.collectionView(_:numberOfItemsInSection:))) {
-                    for i in 0 ..< sections {
-                        items += dataSource.collectionView(collectionView, numberOfItemsInSection: i)
-                    }
-                }
-            }
-        }
-        return items
-    }
-}
-
 extension UIView {
     
+    /// 空白页是否可见
     public var blankVisiable: Bool {
         get {
             guard self.blank?.customBlankView == nil else {
@@ -384,17 +150,20 @@ extension UIView {
         }
     }
     
-    private var blank: Blank! {
+    /// 空白页描述实例
+    private var blank: Blank? {
         get {
             return objc_getAssociatedObject(self, &kBlank) as? Blank
         }
     }
     
-    public func setBlank(_ newValue: Blank) -> Void {
+    /// 设置空白页描述实例
+    public func setBlank(_ newValue: Blank) {
         if !canDisplay() {invalidate()}
         objc_setAssociatedObject(self, &kBlank, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
+    /// 更新空白页配置
     public var updateBlankConf: (_ closure: (_ conf:BLankConf)-> (Void)) -> Void {
         get {
             return { (cls) in
@@ -417,12 +186,14 @@ extension UIView {
         }
     }
     
-    public func blankConfReset() -> Void {
+    /// 重置空白页
+    public func blankConfReset() {
         self.blankView.update { (conf) in
             conf.reset()
         }
     }
     
+    /// 空白页视图
     private var blankView: BlankView! {
         get {
             if let view = objc_getAssociatedObject(self, &kBlankView) as? BlankView {
@@ -444,8 +215,8 @@ extension UIView {
     
     @objc private func at_tapAction(_ gesture:UITapGestureRecognizer) -> Void {
         if self.blank == nil {return}
-        if !self.blank.isTapEnable {return}
-        if let tap = self.blank.tap {tap(gesture)}
+        if self.blank?.isTapEnable == false {return}
+        if let tap = self.blank?.tap {tap(gesture)}
     }
     
     public func resetBlank() {
@@ -479,8 +250,7 @@ extension UIView {
                 }
             }
             
-            
-            if let view = self.blank.customBlankView {
+            if let view = self.blank?.customBlankView {
                 
                 addBlankView?(view)
                 view.isHidden = false
@@ -505,11 +275,11 @@ extension UIView {
         }
     }
     
-    private func canDisplay() -> (Bool) {
+    private func canDisplay() -> Bool {
         return self.blank != nil;
     }
     
-    private func invalidate() -> (Void) {
+    private func invalidate() {
         
         if let view = self.blank?.customBlankView {
             view.isHidden = true

@@ -16,27 +16,24 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        /// make blank
         var num = 0
-        let blank:Blank = Blank(type: .fail, image:Blank.defaultBlankImage(type: .fail), title: NSAttributedString(string: "请求失败"), desc: NSAttributedString(string: "10014")) { (tap) -> (Void) in
+        let blank: Blank = Blank(type: .fail, image:Blank.defaultImage(type: .fail), title: "请求失败", desc: "10014") { tap in
             num += 1
             print("clicked:\(num)")
             self.view.blankConfReset()
         }
         
-        /// set blank and reload
         view.setBlank(blank)
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.view.reloadBlank()
         }
 
-        /// update style
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+2) {
             self.view.updateBlankConf { (conf) in
                 conf.backgorundColor = .black
-                conf.titleFont = UIFont.boldSystemFont(ofSize: 14);
+                conf.titleFont = .boldSystemFont(ofSize: 14);
                 conf.titleColor = .white
-                conf.descFont = UIFont.boldSystemFont(ofSize: 14);
+                conf.descFont = .boldSystemFont(ofSize: 14);
                 conf.descColor = .white
                 conf.verticalOffset = 200
             }
