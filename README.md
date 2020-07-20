@@ -16,7 +16,7 @@
 import Blank
 
     var num = 0
-    let blank: Blank = Blank(type: .fail, image:Blank.defaultImage(type: .fail), title: "请求失败", desc: "10014") { tap in
+    let blank: Blank = Blank(type: .fail, image:Blank.image(type: .fail), title: "请求失败", desc: "10014") { tap in
         num += 1
         print("clicked:\(num)")
         self.view.blankConfReset()
@@ -26,7 +26,7 @@ import Blank
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
         self.view.reloadBlank()
     }
-
+    
     DispatchQueue.main.asyncAfter(deadline: .now()+2) {
         self.view.updateBlankConf { (conf) in
             conf.backgorundColor = .black
@@ -37,6 +37,7 @@ import Blank
             conf.verticalOffset = 200
         }
     }
+
 
 ```
 

@@ -85,13 +85,13 @@ public class Blank: NSObject {
         case .noNetwork:
             title = NSAttributedString(string: "哎呀,断网了～")
         }
-        return Blank(type: type, image: defaultImage(type: type), title: title, desc: nil, tap: nil)
+        return Blank(type: type, image: image(type: type), title: title, desc: nil, tap: nil)
     }
     
     /// 获取默认图片
     /// - Parameter type: 类型
     /// - Returns: 图片
-    public class func defaultImage(type: BlankType) -> UIImage? {
+    public class func image(type: BlankType) -> UIImage? {
         switch type {
         case .fail:         return UIImage.inBlank(named: "blank_fail")
         case .noData:       return UIImage.inBlank(named: "blank_nodata")
