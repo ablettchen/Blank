@@ -50,7 +50,7 @@ public class Blank: NSObject {
     public var desc: NSAttributedString?
     
     /// 点击事件
-    public var tap: ((_ :UITapGestureRecognizer) -> (Void))?
+    public var tap: ((_ : UITapGestureRecognizer) -> Void)?
     
     /// 加载图片
     public var loadingImage: UIImage?
@@ -158,18 +158,18 @@ extension UIView {
     }
     
     /// 设置空白页描述实例
-    public func setBlank(_ newValue: Blank) {
+    public func setBlank(_ newValue: Blank?) {
         if !canDisplay() {invalidate()}
         objc_setAssociatedObject(self, &kBlank, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
     /// 更新空白页配置
-    public var updateBlankConf: (_ closure: (_ conf:BLankConf)-> (Void)) -> Void {
+    public var updateBlankConf: (_ closure: (_ conf: BLankConf) -> Void) -> Void {
         get {
-            return { (cls) in
+            return { (block) in
                 
                 let conf = BLankConf()
-                cls(conf)
+                block(conf)
                 
                 self.blankView.update { (config) in
                     config.backgorundColor      = conf.backgorundColor
