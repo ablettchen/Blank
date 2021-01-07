@@ -141,7 +141,7 @@ extension BlankView {
                 make.top.equalTo(lastConstraint).offset(canShowImage ? conf?.titleToImagePadding ?? 0 : 0.0)
                 make.width.centerX.equalTo(contentView)
             }
-            lastConstraint = titleLabel.snp_bottom
+            lastConstraint = titleLabel.snp.bottom
         }
         
         if canShowDesc {
@@ -150,7 +150,7 @@ extension BlankView {
                 make.top.equalTo(lastConstraint).offset(canShowTitle ? conf?.descToTitlePadding ?? 0 : 0.0)
                 make.width.centerX.equalTo(contentView)
             }
-            lastConstraint = descLabel.snp_bottom
+            lastConstraint = descLabel.snp.bottom
         }
         
         contentView.snp.makeConstraints { (make) in

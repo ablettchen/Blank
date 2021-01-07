@@ -79,11 +79,11 @@ public class Blank: NSObject {
         var title: NSAttributedString!
         switch type {
         case .fail:
-            title = NSAttributedString(string: "请求失败")
+            title = NSAttributedString(string: "点击屏幕，重新加载～")
         case .noData:
-            title = NSAttributedString(string: "暂时没有数据～")
+            title = NSAttributedString(string: "暂无内容~")
         case .noNetwork:
-            title = NSAttributedString(string: "哎呀,断网了～")
+            title = NSAttributedString(string: " 网络未连接\n请检查网络设置")
         }
         return Blank(type: type, image: image(type: type), title: title, desc: nil, tap: nil)
     }
