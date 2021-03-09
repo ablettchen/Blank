@@ -34,9 +34,9 @@ public class BLankConf: NSObject {
         
         self.backgorundColor = .white
         self.titleFont = .systemFont(ofSize: 14)
-        self.titleColor = .darkGray
+        self.titleColor = .init(red: 51.0 / 255.0, green: 51.0 / 255.0, blue: 51.0 / 255.0, alpha: 1.0)
         self.descFont = .systemFont(ofSize: 12)
-        self.descColor = .gray
+        self.descColor = .init(red: 153.0 / 255.0, green: 153.0 / 255.0, blue: 153.0 / 255.0, alpha: 1.0)
         self.verticalOffset = 0.0
         self.titleToImagePadding = 15.0
         self.descToTitlePadding = 10.0
