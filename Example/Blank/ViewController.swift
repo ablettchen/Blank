@@ -17,13 +17,13 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         var num = 0
-        let blank: Blank = Blank(type: .fail, image:Blank.image(type: .fail), title: "请求失败", desc: "10014") { tap in
+        let blank: Blank = Blank(type: .fail, image:Blank.image(.fail), title: "请求失败", desc: "10014") { tap in
             num += 1
             print("clicked:\(num)")
             self.view.blankConfReset()
         }
         
-        view.setBlank(blank)
+        view.atBlank = blank
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.view.reloadBlank()
         }

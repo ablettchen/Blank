@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public class BLankConf: NSObject {
 
     public var backgorundColor: UIColor!
@@ -26,12 +25,10 @@ public class BLankConf: NSObject {
     
     override init() {
         super.init()
-        
         reset()
     }
     
     public func reset() -> Void {
-        
         self.backgorundColor = .white
         self.titleFont = .systemFont(ofSize: 14)
         self.titleColor = .init(red: 51.0 / 255.0, green: 51.0 / 255.0, blue: 51.0 / 255.0, alpha: 1.0)
@@ -41,6 +38,5 @@ public class BLankConf: NSObject {
         self.titleToImagePadding = 18.0
         self.descToTitlePadding = 10.0
         self.isTapEnable = true
-        
     }
 }

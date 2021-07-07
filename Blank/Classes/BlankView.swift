@@ -9,29 +9,24 @@ import UIKit
 
 private let animationKey = "animationKey"
 
-/// 空白页
 public class BlankView: UIView {
-    
-    /// 配置
+
     private var conf: BLankConf?
-    
-    /// 内容
+
     private lazy var contentView: UIView = {
         let view = UIView()
         view.isUserInteractionEnabled = true
         view.alpha = 0
         return view
     }()
-    
-    /// 图片
+
     private lazy var imageView: UIImageView = {
         let view = UIImageView()
         view.isUserInteractionEnabled = true
         view.contentMode = .scaleAspectFit
         return view
     }()
-    
-    /// 标题
+
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.isUserInteractionEnabled = true
@@ -40,8 +35,7 @@ public class BlankView: UIView {
         label.numberOfLines = 0
         return label
     }()
-    
-    /// 描述
+
     private lazy var descLabel: UILabel = {
         let label = UILabel()
         label.isUserInteractionEnabled = true
@@ -50,39 +44,13 @@ public class BlankView: UIView {
         label.numberOfLines = 0
         return label
     }()
-    
-    /// 描述实例
+
     public var blank: Blank? {
         didSet {
             if let blank = blank {
                 self.imageView.image = blank.isAnimating ? blank.loadingImage : blank.image
                 self.titleLabel.attributedText = blank.title
                 self.descLabel.attributedText = blank.desc
-            }
-        }
-    }
-    
-    /// 更新配置
-    public var update: (_ closure: (_ conf: BLankConf) -> Void) -> Void {
-        get {
-            return { [weak self] (block) in
-
-                let conf = self?.conf ?? BLankConf()
-                self?.conf = conf
-                if self != nil {block(conf)}
-                
-                self?.isUserInteractionEnabled = conf.isTapEnable
-                self?.backgroundColor = conf.backgorundColor
-                self?.titleLabel.font = conf.titleFont
-                self?.titleLabel.textColor = conf.titleColor
-                self?.descLabel.font = conf.descFont
-                self?.descLabel.textColor = conf.descColor
-                
-                if let sview = self?.contentView.superview {
-                    self?.contentView.snp.updateConstraints({ (make) in
-                        make.centerY.equalTo(sview).offset((conf.verticalOffset ?? 0))
-                    })
-                }
             }
         }
     }
@@ -101,7 +69,27 @@ public class BlankView: UIView {
 
 extension BlankView {
     
-    /// 重置
+    public var update: (_ block: (_ conf: BLankConf) -> Void) -> Void {
+        get {
+            return { [weak self] (block) in
+                let conf = self?.conf ?? BLankConf()
+                self?.conf = conf
+                if self != nil {block(conf)}
+                self?.isUserInteractionEnabled = conf.isTapEnable
+                self?.backgroundColor = conf.backgorundColor
+                self?.titleLabel.font = conf.titleFont
+                self?.titleLabel.textColor = conf.titleColor
+                self?.descLabel.font = conf.descFont
+                self?.descLabel.textColor = conf.descColor
+                if let sview = self?.contentView.superview {
+                    self?.contentView.snp.updateConstraints({ (make) in
+                        make.centerY.equalTo(sview).offset((conf.verticalOffset ?? 0))
+                    })
+                }
+            }
+        }
+    }
+
     public func reset() {
         for view in contentView.subviews {view.removeFromSuperview()}
         contentView.alpha = 0
@@ -109,8 +97,7 @@ extension BlankView {
         titleLabel.text = nil
         descLabel.text = nil
     }
-    
-    /// 准备
+
     public func prepare() {
         
         imageView.isHidden = !canShowImage
@@ -183,21 +170,18 @@ extension BlankView {
 }
 
 extension BlankView {
-    
-    /// 是否能显示图片
+
     private var canShowImage: Bool {
         return ((imageView.image) != nil)
     }
-    
-    /// 是否能显示标题
+
     private var canShowTitle: Bool {
         if let attributedText = titleLabel.attributedText {
             return (attributedText.length > 0)
         }
         return false
     }
-    
-    /// 是否能显示描述
+
     private var canShowDesc: Bool {
         if let attributedText = descLabel.attributedText {
             return (attributedText.length > 0)
